@@ -1,0 +1,35 @@
+name: Integracion Continua
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Ejecutar programa
+        run: node index.js
+
+      - name: Enviar notificacion a ntfy
+        run: |
+          curl \
+            -H "Title: GitHub Actions" \
+            -H "Priority: default" \
+            -H "Tags: white_check_mark,github" \
+            -d "CI ejecutada correctamente en la rama main" \
+            https://ntfy.sh/devops-itla
